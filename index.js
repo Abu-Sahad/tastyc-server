@@ -30,15 +30,24 @@ async function run() {
         await client.connect();
 
         const menuCollection = client.db('testyDb').collection('menu')
-        const reviewsCollection=client.db('testyDb').collection('reviews')
+        const reviewsCollection = client.db('testyDb').collection('reviews')
+        const cartCollection = client.db('testyDb').collection('cart')
 
         app.get('/menu', async (req, res) => {
             const result = await menuCollection.find().toArray()
             res.send(result)
         })
 
-        app.get('/review',async(req,res)=>{
-            const result = await menuCollection.find().toArray()
+        app.get('/review', async (req, res) => {
+            const result = await reviewsCollection.find().toArray()
+            res.send(result)
+        })
+
+        //cart post
+        app.post('/cart', async (req, res) => {
+            const item = req.body;
+            console.log(item)
+            const result = await cartCollection.insertOne(item)
             res.send(result)
         })
 
