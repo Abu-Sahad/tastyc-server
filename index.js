@@ -32,11 +32,37 @@ async function run() {
         const menuCollection = client.db('testyDb').collection('menu')
         const reviewsCollection = client.db('testyDb').collection('reviews')
         const cartCollection = client.db('testyDb').collection('cart')
+        const userCollection = client.db('testyDb').collection('users')
+        // user api
 
+        app.get('/users', async (req, res) => {
+            const result = await userCollection.find().toArray()
+            res.send(result)
+        })
+
+
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const query = { email: user.email }
+            const existingUser = await userCollection.findOne(query);
+            if (existingUser) {
+                return res.send({ message: 'user already exists' })
+            }
+            const result = await userCollection.insertOne(user)
+            res.send(result)
+        })
+
+
+
+        //menu api
         app.get('/menu', async (req, res) => {
             const result = await menuCollection.find().toArray()
             res.send(result)
         })
+
+
+        ///review api
 
         app.get('/review', async (req, res) => {
             const result = await reviewsCollection.find().toArray()
@@ -66,7 +92,7 @@ async function run() {
         app.delete('/cart/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
-            const result = await cartCollection(query);
+            const result = await cartCollection.deleteOne(query);
             res.send(result)
         })
 
